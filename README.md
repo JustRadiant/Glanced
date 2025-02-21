@@ -8,7 +8,7 @@ A simple set of scripts to map Discord user connections. This is an older projec
 1. Open Discord in your browser
 2. Press F12 to open DevTools
 3. Go to Console tab
-4. Paste the collector script and run it
+4. Paste the contents of `Glance Console Script` and run it
 5. Wait for `combined.json` to download
    - This might take a while depending on your friend count
    - The script has delays to avoid Discord rate limits

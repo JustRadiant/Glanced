@@ -37,15 +37,15 @@ node bot.js
 ```
 
 ### Commands
-* `!glance <user>` - Spill the tea on someone
-* `!glance overview` - Get the numbers bestie
-* `!glance list` - See who's on the watchlist
+* `!glance <user>` - A glorified broken follower list 
+* `!glance overview` - Get the numbers
+* `!glance list` - See how many people you can *GLANCE* upon
 
 ## Notes
 * This is old code, don't judge
 * Basic version because who needs features
 * Made with Discord.js v14 
-* If it breaks, try turning it off and on again fr fr
+* If it breaks, try turning it off and on again
 
 ## Credits
 Original mutual friends concept by [humboldt123](https://github.com/humboldt123). We just made it messier.

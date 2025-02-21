@@ -1,0 +1,95 @@
+(async function () {
+  const data = [];
+
+  async function update(token) {
+    try {
+      console.log("Fetching user...");
+      const user = await fetch("https://discord.com/api/v9/users/@me", {
+        headers: {
+          authorization: token,
+        },
+      }).then((res) => res.json());
+
+      console.log("Fetching relationships...");
+      const relationships = await fetch("https://discord.com/api/v9/users/@me/relationships", {
+        headers: {
+          authorization: token,
+        },
+      }).then((res) => res.json());
+      console.log(`Found ${relationships.length} relationships.`);
+
+      const totalRelationships = relationships.length;
+      const friendRelationships = relationships.filter((relationship) => relationship.type === 1);
+      const totalFriends = friendRelationships.length;
+      console.log(`Found ${totalFriends} friends.`);
+
+      const startTime = Date.now();
+
+      // Add the user's own data
+      const userData = {
+        ID: user.id,
+        Username: user.username,
+        AvatarURL: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar || "default"}.png`,
+        serverNames: [],
+        connections: [],
+      };
+
+      const userMutuals = relationships.filter((relationship) => relationship.type === 1);
+      userMutuals.forEach((mutual) => userData.connections.push(mutual.id));
+      data.push(userData);
+
+      for (let i = 0; i < friendRelationships.length; i++) {
+        const relationship = friendRelationships[i];
+        const friend = {
+          ID: relationship.id,
+          Username: relationship.user.username,
+          AvatarURL: `https://cdn.discordapp.com/avatars/${relationship.id}/${relationship.user.avatar || "default"}.png`,
+          serverNames: [],
+          connections: [],
+        };
+
+        const mutuals = await fetch(`https://discord.com/api/v9/users/${relationship.id}/relationships`, {
+          headers: {
+            authorization: token,
+          },
+        }).then((res) => res.json());
+
+        mutuals.forEach((mutual) => friend.connections.push(mutual.id));
+        data.push(friend);
+
+        const elapsedTime = Date.now() - startTime;
+        const estimatedTotalTime = (elapsedTime / (i + 1)) * totalFriends;
+        const remainingTime = estimatedTotalTime - elapsedTime;
+        const minutes = Math.floor(remainingTime / 60000);
+        const seconds = Math.floor((remainingTime % 60000) / 1000);
+
+        console.log(`Processed ${i + 1}/${totalFriends} friends. Estimated time remaining: ${minutes}m ${seconds}s`);
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
+
+      console.log("Preparing data for export...");
+      const dataStr = JSON.stringify(data, null, 2);
+      const blob = new Blob([dataStr], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "combined.json";
+      link.click();
+      URL.revokeObjectURL(url);
+      console.log(`Export complete. Saved: ${data.length - 1} friends and your account.`);
+    } catch (error) {
+      console.error("Error updating connections:", error);
+    }
+  }
+
+  const getToken = () => ((webpackChunkdiscord_app.push([[''], {}, e => { m = []; for (let c in e.c) m.push(e.c[c]) }]), m).find(m => m?.exports?.default?.getToken !== void 0).exports.default.getToken());
+
+  const token = getToken();
+
+  if (token) {
+    console.log("Token found. Starting export...");
+    await update(token);
+  } else {
+    console.log("No token found. Exiting.");
+  }
+})();

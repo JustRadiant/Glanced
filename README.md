@@ -1,4 +1,4 @@
-# Discord Network Mapper (Glance)
+# Discord Network Mapper | Glance | A Glorified Mutual List 
 
 A fork of [humboldt123's Mutuals](https://github.com/humboldt123/mutuals) but with works in discord but less graphs because sometimes you just need to know things bestie.
 
